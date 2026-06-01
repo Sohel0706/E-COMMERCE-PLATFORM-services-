@@ -1,0 +1,30 @@
+Download and run the installer for the latest release.
+Or if using PowerShell, use this command:
+
+New-Item -Path 'c:\' -Name 'minikube' -ItemType Directory -Force
+$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -OutFile 'c:\minikube\minikube.exe' -Uri 'https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe' -UseBasicParsing
+
+Add the minikube.exe binary to your PATH.
+Make sure to run PowerShell as Administrator.
+
+$oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)
+if ($oldPath.Split(';') -inotcontains 'C:\minikube'){
+  [Environment]::SetEnvironmentVariable('Path', $('{0};C:\minikube' -f $oldPath), [EnvironmentVariableTarget]::Machine)
+}
+
+
+#Run mysql service container mapping it to port 3307
+docker run -d `
+  --name mysql-dev `
+  -e MYSQL_ROOT_PASSWORD=root123 `
+  -p 3307:3306 `
+  mysql:8
+
+#To check all containers
+docker ps - a
+
+#To connect to mysql inside container
+docker exec -it 50fb9ee94dc6 mysql -u root -p
+
+#To start all services use
+docker compose up --build
