@@ -20,3 +20,11 @@ docker run -d `
   -p 3307:3306 `
   mysql:8
 
+#To check all containers
+docker ps - a
+
+#To connect to mysql inside container
+docker exec -it 50fb9ee94dc6 mysql -u root -p
+
+#To start all services use
+docker compose up --build
