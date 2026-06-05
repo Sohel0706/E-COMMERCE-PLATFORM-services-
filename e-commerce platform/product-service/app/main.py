@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 
-from app.api.user_routes import router
+from app.api.product_routes import router
 from app.database.database import Base
 from app.database.database import engine
 from app.database.init_db import wait_for_db
 
 app = FastAPI(
-    title="User Service"
+    title="Product Service"
 )
 
 

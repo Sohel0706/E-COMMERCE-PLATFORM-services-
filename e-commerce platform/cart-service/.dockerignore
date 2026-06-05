@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.env
+cart-env/
+venv/
+.venv/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/

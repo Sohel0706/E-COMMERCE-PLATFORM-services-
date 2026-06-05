@@ -20,6 +20,15 @@ docker run -d `
   -p 3307:3306 `
   mysql:8
 
+#To check all docker images
+docker images
+
+#To delete docker image
+docker rmi <image_id>
+
+#To create docker image from Dockerfile
+docker build -t <service_name>:<tag> .
+
 #To check all containers
 docker ps - a
 

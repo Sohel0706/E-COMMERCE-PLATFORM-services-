@@ -2,6 +2,7 @@ services:
 
   mysql:
     image: mysql:8
+    container_name: ecommerce-mysql
 
     environment:
       MYSQL_ROOT_PASSWORD: root123
@@ -12,6 +13,7 @@ services:
 
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
 
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -20,8 +22,12 @@ services:
       retries: 10
 
   user-service:
+    image: ecommerce-user-service
+    container_name: ecommerce-user-service
+
     build:
       context: ./user-service
+      dockerfile: Dockerfile
 
     ports:
       - "8000:8000"
@@ -32,10 +38,62 @@ services:
       DB_USER: root
       DB_PASSWORD: root123
       DB_NAME: users
+      CART_SERVICE_URL: http://cart-service:8000
 
     depends_on:
       mysql:
         condition: service_healthy
+
+  product-service:
+    image: ecommerce-product-service
+    container_name: ecommerce-product-service
+
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+
+    ports:
+      - "8001:8000"
+
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root123
+      DB_NAME: products
+      CART_SERVICE_URL: http://cart-service:8000
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  cart-service:
+    image: ecommerce-cart-service
+    container_name: ecommerce-cart-service
+
+    build:
+      context: ./cart-service
+      dockerfile: Dockerfile
+
+    ports:
+      - "8002:8000"
+
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root123
+      DB_NAME: carts
+      USER_SERVICE_URL: http://user-service:8000
+      PRODUCT_SERVICE_URL: http://product-service:8000
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      product-service:
+        condition: service_started
 
 volumes:
   mysql_data:
